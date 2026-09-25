@@ -6,9 +6,9 @@ export default function Hero() {
       {/* Background image */}
       <div className="absolute inset-0">
         <img
-          src="/images/hero-airport.jpg"
+          src="/heroimg.jpg"
           alt=""
-          className="h-full w-full object-cover object-[70%_center]"
+          className="h-full w-full object-cover"
         />
         {/* Left-to-right dark gradient so text stays legible over the photo */}
         <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
