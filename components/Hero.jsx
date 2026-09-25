@@ -10,7 +10,6 @@ export default function Hero() {
           alt=""
           className="h-full w-full object-cover"
         />
-        {/* Left-to-right dark gradient so text stays legible over the photo */}
         <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
         <div className="absolute inset-0 bg-slate-950/20" />
       </div>
