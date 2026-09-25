@@ -85,7 +85,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
+      <div className="">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-sm text-slate-400 sm:flex-row lg:px-8">
           <p>© 2026 Career Dunes. All rights reserved.</p>
           <nav className="flex flex-wrap items-center justify-center gap-6">

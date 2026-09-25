@@ -2,15 +2,15 @@ import { ArrowRight, Users, ShieldCheck, CheckCircle2, UserCheck } from "lucide-
 
 export default function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-slate-950">
+    <section className="relative isolate overflow-hidden ">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
           src="/heroimg.jpg"
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover mt-10"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/85 to-slate-950/30" />
+        <div className="absolute inset-0 bg-linear-to-r from-slate-800 via-slate-950/50 to-slate-950/30" />
         <div className="absolute inset-0 bg-slate-950/20" />
       </div>
 
