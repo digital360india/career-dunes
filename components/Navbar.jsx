@@ -18,7 +18,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="border-t-4 border-slate-900 bg-white fixed top-0 z-50 w-full">
+    <header className=" bg-white fixed top-0 z-50 w-full">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
         {/* Logo */}
         <a href="/" className="flex shrink-0 items-center gap-3">
