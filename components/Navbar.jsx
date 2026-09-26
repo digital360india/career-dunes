@@ -4,21 +4,21 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "About Us", href: "#about" },
-  { label: "Current Jobs", href: "#jobs" },
-  { label: "Countries", href: "#countries" },
-  { label: "Industries", href: "#industries" },
-  { label: "For Employers", href: "#employers" },
-  { label: "For Job Seekers", href: "#seekers" },
-  { label: "Recruitment Process", href: "#process" },
-  { label: "Contact Us", href: "#contact" },
+  { label: "About Us", href: "about" },
+  { label: "Current Jobs", href: "jobs" },
+  { label: "Countries", href: "countries" },
+  { label: "Industries", href: "industries" },
+  { label: "For Employers", href: "employers" },
+  { label: "For Job Seekers", href: "seekers" },
+  { label: "Recruitment Process", href: "process" },
+  { label: "Contact Us", href: "contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className=" bg-white fixed top-0 z-50 w-full">
+    <header className=" bg-white sticky top-0 z-50 w-full">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
         {/* Logo */}
         <a href="/" className="flex shrink-0 items-center gap-3">
