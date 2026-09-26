@@ -20,7 +20,7 @@ export function FraudBand() {
           </div>
         </div>
         <Button asChild variant="warning" size="lg">
-          <Link href="/verify-job">
+          <Link href="/verify-job" className="flex items-center gap-2">
             Verify job / report fraud <ChevronRight />
           </Link>
         </Button>
