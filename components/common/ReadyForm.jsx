@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
