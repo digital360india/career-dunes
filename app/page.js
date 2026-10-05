@@ -1,12 +1,13 @@
 import Hero from "@/components/Hero";
+import { HomePage } from "@/components/HomePage";
 import StatsBar from "@/components/StatsBar";
-import Image from "next/image";
 
 export default function Home() {
   return (
    <>
-   <Hero />
-   <StatsBar />
+   {/* <Hero /> */}
+   {/* <StatsBar /> */}
+   <HomePage />
    </>
   );
 }

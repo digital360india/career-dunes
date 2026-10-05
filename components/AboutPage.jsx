@@ -1,3 +1,4 @@
+'use client';
 import { CheckCircle2 } from "lucide-react";
 import { SectionHeading } from "./common/SectionHeading";
 import { FraudBand } from "./common/FraudBand";

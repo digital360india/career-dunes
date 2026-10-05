@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, MessageCircle, ShieldCheck, X } from "lucide-react";
+import Link from "next/link";
 
 const NAV_LINKS = [
   { label: "About Us", href: "about" },
@@ -16,9 +17,25 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const WHATSAPP_NUMBER = 8303022306
+  const WHATSAPP_DISPLAY = '+91 83030 22306';
 
   return (
     <header className=" bg-white sticky top-0 z-50 w-full">
+      <div className="bg-primary text-primary-foreground">
+        <div className="container flex h-9 items-center justify-between gap-4 text-xs font-medium">
+          <p className="hidden items-center gap-2 sm:flex">
+            <ShieldCheck className="size-3.5 text-highlight" /> Verified employers. Transparent recruitment.
+          </p>
+          <Link
+            href='/verify-job'
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 font-semibold hover:text-highlight"
+          >
+            Verify a job offer →
+          </Link>
+        </div>
+      </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
         {/* Logo */}
         <a href="/" className="flex shrink-0 items-center gap-3">
@@ -53,13 +70,13 @@ export default function Navbar() {
         {/* Desktop CTAs */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <a
-            href="#hire"
+            href="/employers"
             className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
           >
             Hire workers
           </a>
           <a
-            href="#jobs"
+            href="/jobs"
             className="rounded-lg bg-[#dca564] px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-[#d0954e]"
           >
             Find jobs
@@ -95,13 +112,13 @@ export default function Navbar() {
           </nav>
           <div className="mt-5 flex flex-col gap-3">
             <a
-              href="#hire"
+              href="/employers"
               className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-center text-sm font-semibold text-slate-900"
             >
               Hire workers
             </a>
             <a
-              href="#jobs"
+              href="/jobs"
               className="rounded-lg bg-[#DCA564] px-5 py-2.5 text-center text-sm font-semibold text-slate-900"
             >
               Find jobs
