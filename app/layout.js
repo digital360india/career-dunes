@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { JobSeekerPopup } from "@/components/PopUp";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +29,17 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${figtree.variable} ${outfit.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">
-        <Navbar />
+      <body
+        className="min-h-full flex flex-col font-sans"
+        suppressHydrationWarning
+      >
+        <AuthProvider>
+           <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
-        <JobSeekerPopup/>
+        <JobSeekerPopup />
+        </AuthProvider>
+       
       </body>
     </html>
   );

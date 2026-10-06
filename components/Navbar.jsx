@@ -4,7 +4,8 @@ import { useState } from "react";
 import { ChevronDown, Menu, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/Button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const menuGroups = [
   {
@@ -47,9 +48,15 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, role, loading, logout } = useAuth();
   const isActive = (href) => pathname === href;
-  const WHATSAPP_NUMBER = 8303022306;
-  const WHATSAPP_DISPLAY = "+91 83030 22306";
+
+  const handleLogout = async () => {
+    await logout();
+    setOpen(false);
+    router.push("/");
+  };
 
   return (
     <header className=" bg-white sticky top-0 z-50 w-full">
@@ -86,6 +93,7 @@ export default function Navbar() {
           </span>
         </Link>
 
+        {/* Desktop nav */}
         <nav
           className="hidden items-center gap-1 lg:flex"
           aria-label="Main navigation"
@@ -123,9 +131,37 @@ export default function Navbar() {
               </div>
             </div>
           ))}
-          <Button asChild variant="highlight" size="lg" className="ml-3">
-            <Link href="/auth?mode=signup">Sign up</Link>
-          </Button>
+
+          {/* Auth buttons (desktop) */}
+          {!loading &&
+            (user ? (
+              <div className="ml-3 flex items-center gap-2">
+                {role === "admin" && (
+                  <Button asChild variant="highlight" size="lg">
+                    <Link href="/admin">Dashboard</Link>
+                  </Button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="px-3 text-sm font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="ml-3 flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-3 text-sm font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  Login
+                </Link>
+                <Button asChild variant="highlight" size="lg">
+                  <Link href="/signup">Sign up</Link>
+                </Button>
+              </div>
+            ))}
         </nav>
 
         {/* Mobile menu button */}
@@ -205,19 +241,52 @@ export default function Navbar() {
                 )}
               </div>
             ))}
-            <Button
-              asChild
-              variant="highlight"
-              size="lg"
-              className="mt-6 w-full"
-            >
-              <Link
-                href="/auth?mode=signup"
-                onClick={() => setOpen(false)}
-              >
-                Sign up
-              </Link>
-            </Button>
+
+            {/* Auth buttons (mobile) */}
+            {!loading &&
+              (user ? (
+                <div className="mt-6 grid gap-3 pb-10">
+                  {role === "admin" && (
+                    <Button
+                      asChild
+                      variant="highlight"
+                      size="lg"
+                      className="w-full"
+                    >
+                      <Link href="/admin" onClick={() => setOpen(false)}>
+                        Dashboard
+                      </Link>
+                    </Button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full rounded-md border border-primary-foreground/30 py-3 text-base font-semibold"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-6 grid gap-3 pb-10">
+                  <Button
+                    asChild
+                    variant="highlight"
+                    size="lg"
+                    className="w-full"
+                  >
+                    <Link href="/signup" onClick={() => setOpen(false)}>
+                      Sign up
+                    </Link>
+                  </Button>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="w-full rounded-md border border-primary-foreground/30 py-3 text-center text-base font-semibold"
+                  >
+                    Login
+                  </Link>
+                </div>
+              ))}
           </nav>
         </div>
       )}
