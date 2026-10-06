@@ -1,5 +1,4 @@
 import React from 'react'
-import { AboutPage } from "@/components/AboutPage";
 import { ContactPage } from '@/components/ContactPage';
  meta: [
     { title: "Contact Career Dunes | Recruitment Support" },

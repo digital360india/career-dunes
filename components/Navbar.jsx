@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, MessageCircle, ShieldCheck, X } from "lucide-react";
+import { ChevronDown, Menu, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
+import { Button } from "./ui/Button";
+import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
   { label: "About Us", href: "about" },
@@ -15,20 +17,61 @@ const NAV_LINKS = [
   { label: "Contact Us", href: "contact" },
 ];
 
+const menuGroups = [
+  {
+    label: "Home",
+    href: "/",
+    items: [
+      { label: "About Us", href: "/about" },
+      { label: "Recruitment Process", href: "/recruitment-process" },
+    ],
+  },
+  {
+    label: "Current Jobs",
+    href: "/jobs",
+    items: [
+      { label: "All Jobs", href: "/jobs" },
+      { label: "Jobs by Country", href: "/countries" },
+      { label: "For Job Seekers", href: "/job-seekers" },
+    ],
+  },
+  {
+    label: "Employers",
+    href: "/employers",
+    items: [
+      { label: "For Employers", href: "/employers" },
+      { label: "Industries", href: "/industries" },
+      { label: "Recruitment Process", href: "/recruitment-process" },
+    ],
+  },
+  {
+    label: "Contact Us",
+    href: "/contact",
+    items: [
+      { label: "Contact Us", href: "/contact" },
+      { label: "Verify a Job", href: "/verify-job" },
+    ],
+  },
+];
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const WHATSAPP_NUMBER = 8303022306
-  const WHATSAPP_DISPLAY = '+91 83030 22306';
+  const [expanded, setExpanded] = useState(null);
+  const pathname = usePathname();
+  const isActive = (href) => pathname === href;
+  const WHATSAPP_NUMBER = 8303022306;
+  const WHATSAPP_DISPLAY = "+91 83030 22306";
 
   return (
     <header className=" bg-white sticky top-0 z-50 w-full">
       <div className="bg-primary text-primary-foreground">
         <div className="container flex h-9 items-center justify-between gap-4 text-xs font-medium">
           <p className="hidden items-center gap-2 sm:flex">
-            <ShieldCheck className="size-3.5 text-highlight" /> Verified employers. Transparent recruitment.
+            <ShieldCheck className="size-3.5 text-highlight" /> Verified
+            employers. Transparent recruitment.
           </p>
           <Link
-            href='/verify-job'
+            href="/verify-job"
             rel="noreferrer"
             className="inline-flex items-center gap-2 font-semibold hover:text-highlight"
           >
@@ -54,8 +97,49 @@ export default function Navbar() {
           </span>
         </a>
 
+        <nav
+          className="hidden items-center gap-1 lg:flex"
+          aria-label="Main navigation"
+        >
+          {menuGroups.map((group) => (
+            <div key={group.label} className="group relative">
+              <Link
+                href={group.href}
+                className={`flex h-18 items-center gap-1.5 px-3 text-sm font-semibold transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  isActive(group.href)
+                    ? "text-secondary"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {group.label}
+                <ChevronDown
+                  aria-hidden="true"
+                  className="size-3.5 transition-transform duration-200 group-hover:rotate-180 group-focus-within:rotate-180"
+                />
+              </Link>
+              <div className="invisible absolute left-0 top-full z-50 min-w-56 translate-y-1 border border-border bg-popover p-2 opacity-0 shadow-lg transition-[opacity,transform,visibility] duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`block rounded-sm px-3 py-2.5 text-sm transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:outline-none ${
+                      isActive(item.href)
+                        ? "font-semibold text-secondary"
+                        : "text-popover-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+          <Button asChild variant="highlight" size="lg" className="ml-3">
+            <Link href="/auth?mode=signup">Sign up</Link>
+          </Button>
+        </nav>
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-7 lg:flex">
+        {/* <nav className="hidden items-center gap-7 lg:flex">
           {NAV_LINKS.map((link) => (
             <a
               key={link.label}
@@ -65,10 +149,10 @@ export default function Navbar() {
               {link.label}
             </a>
           ))}
-        </nav>
+        </nav> */}
 
         {/* Desktop CTAs */}
-        <div className="hidden shrink-0 items-center gap-3 lg:flex">
+        {/* <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <a
             href="/employers"
             className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
@@ -81,7 +165,7 @@ export default function Navbar() {
           >
             Find jobs
           </a>
-        </div>
+        </div> */}
 
         {/* Mobile menu button */}
         <button
@@ -96,7 +180,7 @@ export default function Navbar() {
       </div>
 
       {/* Mobile nav */}
-      {open && (
+      {/* {open && (
         <div className="border-t border-slate-300/60 px-6 pb-6 lg:hidden">
           <nav className="flex flex-col gap-4 pt-4">
             {NAV_LINKS.map((link) => (
@@ -124,6 +208,87 @@ export default function Navbar() {
               Find jobs
             </a>
           </div>
+        </div>
+      )} */}
+      {open && (
+        <div className="fixed inset-0 z-[60] min-h-screen overflow-y-auto bg-primary text-primary-foreground lg:hidden">
+          <div className="container grid h-[4.5rem] grid-cols-[minmax(0,1fr)_auto] items-center">
+            <span className="font-display text-xl font-bold">Career Dunes</span>
+            <Button
+              variant="nav"
+              size="icon"
+              className="min-h-11 min-w-11"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+            >
+              <X />
+            </Button>
+          </div>
+          <nav className="container grid pt-4" aria-label="Mobile navigation">
+            {menuGroups.map((group, index) => (
+              <div
+                key={group.label}
+                className="border-b border-primary-foreground/15"
+              >
+                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center">
+                  <Link
+                    href={group.href}
+                    onClick={() => setOpen(false)}
+                    className="flex min-w-0 items-center gap-4 py-4 text-xl"
+                  >
+                    <span className="text-xs text-highlight">0{index + 1}</span>
+                    {group.label}
+                  </Link>
+                  <Button
+                    variant="nav"
+                    size="icon"
+                    className="min-h-11 min-w-11"
+                    aria-label={`${expanded === group.label ? "Close" : "Open"} ${group.label} links`}
+                    aria-expanded={expanded === group.label}
+                    aria-controls={`mobile-menu-${index}`}
+                    onClick={() =>
+                      setExpanded(expanded === group.label ? null : group.label)
+                    }
+                  >
+                    <ChevronDown
+                      className={`size-5 transition-transform duration-200 ${expanded === group.label ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                </div>
+                {expanded === group.label && (
+                  <div
+                    id={`mobile-menu-${index}`}
+                    className="grid gap-1 pb-4 pl-9"
+                  >
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="py-2 text-base text-primary-foreground/80 hover:text-primary-foreground"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+            <Button
+              asChild
+              variant="highlight"
+              size="lg"
+              className="mt-6 w-full"
+            >
+              <Link
+                to="/auth"
+                search={{ mode: "signup" }}
+                onClick={() => setOpen(false)}
+              >
+                Sign up
+              </Link>
+            </Button>
+          </nav>
         </div>
       )}
     </header>
