@@ -6,24 +6,13 @@ import Link from "next/link";
 import { Button } from "./ui/Button";
 import { usePathname } from "next/navigation";
 
-const NAV_LINKS = [
-  { label: "About Us", href: "about" },
-  { label: "Current Jobs", href: "jobs" },
-  { label: "Countries", href: "countries" },
-  { label: "Industries", href: "industries" },
-  { label: "For Employers", href: "employers" },
-  { label: "For Job Seekers", href: "seekers" },
-  { label: "Recruitment Process", href: "process" },
-  { label: "Contact Us", href: "contact" },
-];
-
 const menuGroups = [
   {
     label: "Home",
     href: "/",
     items: [
       { label: "About Us", href: "/about" },
-      { label: "Recruitment Process", href: "/recruitment-process" },
+      { label: "Recruitment Process", href: "/process" },
     ],
   },
   {
@@ -32,7 +21,7 @@ const menuGroups = [
     items: [
       { label: "All Jobs", href: "/jobs" },
       { label: "Jobs by Country", href: "/countries" },
-      { label: "For Job Seekers", href: "/job-seekers" },
+      { label: "For Job Seekers", href: "/seekers" },
     ],
   },
   {
@@ -41,7 +30,7 @@ const menuGroups = [
     items: [
       { label: "For Employers", href: "/employers" },
       { label: "Industries", href: "/industries" },
-      { label: "Recruitment Process", href: "/recruitment-process" },
+      { label: "Recruitment Process", href: "/process" },
     ],
   },
   {
@@ -81,7 +70,7 @@ export default function Navbar() {
       </div>
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
         {/* Logo */}
-        <a href="/" className="flex shrink-0 items-center gap-3">
+        <Link href="/" className="flex shrink-0 items-center gap-3">
           <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white">
             CD
           </span>
@@ -95,7 +84,7 @@ export default function Navbar() {
               RECRUITMENT
             </span>
           </span>
-        </a>
+        </Link>
 
         <nav
           className="hidden items-center gap-1 lg:flex"
@@ -138,34 +127,6 @@ export default function Navbar() {
             <Link href="/auth?mode=signup">Sign up</Link>
           </Button>
         </nav>
-        {/* Desktop nav */}
-        {/* <nav className="hidden items-center gap-7 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="text-sm font-medium leading-tight text-slate-700 transition hover:text-slate-900"
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav> */}
-
-        {/* Desktop CTAs */}
-        {/* <div className="hidden shrink-0 items-center gap-3 lg:flex">
-          <a
-            href="/employers"
-            className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
-          >
-            Hire workers
-          </a>
-          <a
-            href="/jobs"
-            className="rounded-lg bg-[#dca564] px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-[#d0954e]"
-          >
-            Find jobs
-          </a>
-        </div> */}
 
         {/* Mobile menu button */}
         <button
@@ -180,39 +141,9 @@ export default function Navbar() {
       </div>
 
       {/* Mobile nav */}
-      {/* {open && (
-        <div className="border-t border-slate-300/60 px-6 pb-6 lg:hidden">
-          <nav className="flex flex-col gap-4 pt-4">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-slate-700"
-                onClick={() => setOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-          <div className="mt-5 flex flex-col gap-3">
-            <a
-              href="/employers"
-              className="rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-center text-sm font-semibold text-slate-900"
-            >
-              Hire workers
-            </a>
-            <a
-              href="/jobs"
-              className="rounded-lg bg-[#DCA564] px-5 py-2.5 text-center text-sm font-semibold text-slate-900"
-            >
-              Find jobs
-            </a>
-          </div>
-        </div>
-      )} */}
       {open && (
-        <div className="fixed inset-0 z-[60] min-h-screen overflow-y-auto bg-primary text-primary-foreground lg:hidden">
-          <div className="container grid h-[4.5rem] grid-cols-[minmax(0,1fr)_auto] items-center">
+        <div className="fixed inset-0 z-60 min-h-screen overflow-y-auto bg-primary text-primary-foreground lg:hidden">
+          <div className="container grid h-18 grid-cols-[minmax(0,1fr)_auto] items-center">
             <span className="font-display text-xl font-bold">Career Dunes</span>
             <Button
               variant="nav"
@@ -281,8 +212,7 @@ export default function Navbar() {
               className="mt-6 w-full"
             >
               <Link
-                to="/auth"
-                search={{ mode: "signup" }}
+                href="/auth?mode=signup"
                 onClick={() => setOpen(false)}
               >
                 Sign up
