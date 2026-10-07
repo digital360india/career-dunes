@@ -42,8 +42,11 @@ function JobCard({ job }) {
         </div>
       </dl>
       <Button asChild className="mt-5 w-full" variant="default">
-        <Link href="/job-seekers" className="flex items-center gap-2">
-          Apply for this job <ArrowRight />
+        <Link
+          href={`/jobs/${job.docId}`}
+          className="flex items-center gap-2"
+        >
+          View & apply <ArrowRight />
         </Link>
       </Button>
     </article>
