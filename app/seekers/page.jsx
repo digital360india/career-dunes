@@ -3,11 +3,8 @@ import { FraudBand } from "@/components/common/FraudBand";
 import { PageHero } from "@/components/common/PageHero";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { CheckCircle2 } from "lucide-react";
-// import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 
-function page() {
-  // const { jobId } = useSearchParams();
+export default function SeekersPage() {
   return (
     <main>
       <PageHero
@@ -38,16 +35,7 @@ function page() {
             </ul>
           </div>
           <div className="card p-6 md:p-8">
-            {/* <ReadyForm type="candidate" jobId={jobId} /> */}
-            <Suspense
-              fallback={
-                <p className="text-center text-muted-foreground">
-                  Loading form…
-                </p>
-              }
-            >
-              <CandidateForm />
-            </Suspense>
+            <CandidateForm />
           </div>
         </div>
       </section>
@@ -55,4 +43,3 @@ function page() {
     </main>
   );
 }
-export default page;
