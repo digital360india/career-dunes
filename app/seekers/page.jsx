@@ -1,15 +1,13 @@
-"use client";
 import { CandidateForm } from "@/components/common/CandidateForm";
 import { FraudBand } from "@/components/common/FraudBand";
 import { PageHero } from "@/components/common/PageHero";
-// import { ReadyForm } from "@/components/common/ReadyForm";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { Can, CheckCircle2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
+// import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 function page() {
-  const { jobId } = useSearchParams();
+  // const { jobId } = useSearchParams();
   return (
     <main>
       <PageHero
@@ -48,7 +46,7 @@ function page() {
                 </p>
               }
             >
-              <CandidateForm jobId={jobId} />
+              <CandidateForm />
             </Suspense>
           </div>
         </div>

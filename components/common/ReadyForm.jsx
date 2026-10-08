@@ -13,6 +13,7 @@ export function ReadyForm({ type = "candidate" }) {
   const [status, setStatus] = useState("idle");
   // const searchParams = useSearchParams();
   // const jobId = searchParams.get("jobId") ?? "";
+  
 
   async function submit(e) {
     e.preventDefault();
