@@ -151,12 +151,12 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="ml-3 flex items-center gap-2">
-                <Link
+                {/* <Link
                   href="/login"
                   className="px-3 text-sm font-semibold text-muted-foreground hover:text-foreground"
                 >
                   Login
-                </Link>
+                </Link> */}
                 <Button asChild variant="highlight" size="lg">
                   <Link href="/signup">Sign up</Link>
                 </Button>
@@ -278,13 +278,13 @@ export default function Navbar() {
                       Sign up
                     </Link>
                   </Button>
-                  <Link
+                  {/* <Link
                     href="/login"
                     onClick={() => setOpen(false)}
                     className="w-full rounded-md border border-primary-foreground/30 py-3 text-center text-base font-semibold"
                   >
                     Login
-                  </Link>
+                  </Link> */}
                 </div>
               ))}
           </nav>
