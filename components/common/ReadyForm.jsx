@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Field } from "@/components/ui/Field";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 
 export function ReadyForm({ type = "candidate" }) {
   const [status, setStatus] = useState("idle");
-  const searchParams = useSearchParams();
-  const jobId = searchParams.get("jobId") ?? "";
+  // const searchParams = useSearchParams();
+  // const jobId = searchParams.get("jobId") ?? "";
 
   async function submit(e) {
     e.preventDefault();
