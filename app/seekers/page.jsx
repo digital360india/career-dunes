@@ -1,10 +1,15 @@
+"use client";
+import { CandidateForm } from "@/components/common/CandidateForm";
 import { FraudBand } from "@/components/common/FraudBand";
 import { PageHero } from "@/components/common/PageHero";
-import { ReadyForm } from "@/components/common/ReadyForm";
+// import { ReadyForm } from "@/components/common/ReadyForm";
 import { SectionHeading } from "@/components/common/SectionHeading";
-import { CheckCircle2 } from "lucide-react";
+import { Can, CheckCircle2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 function page() {
+  const { jobId } = useSearchParams();
   return (
     <main>
       <PageHero
@@ -35,7 +40,16 @@ function page() {
             </ul>
           </div>
           <div className="card p-6 md:p-8">
-            <ReadyForm type="candidate" />
+            {/* <ReadyForm type="candidate" jobId={jobId} /> */}
+            <Suspense
+              fallback={
+                <p className="text-center text-muted-foreground">
+                  Loading form…
+                </p>
+              }
+            >
+              <CandidateForm jobId={jobId} />
+            </Suspense>
           </div>
         </div>
       </section>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 export default function JobDetailPage() {
   const { id } = useParams();
   const [job, setJob] = useState(null);
-  const [status, setStatus] = useState("loading"); // loading | found | missing
+  const [status, setStatus] = useState("loading"); 
 
   useEffect(() => {
     let cancelled = false;

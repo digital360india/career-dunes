@@ -1,38 +1,66 @@
 "use client";
-import { CheckCircle2, CircleAlert } from "lucide-react";
 import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useSearchParams } from "next/navigation";
+import { CheckCircle2, CircleAlert } from "lucide-react";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Field } from "@/components/ui/Field";
-import { useSearchParams } from "next/navigation";
 
-export function ReadyForm({ type = "candidate" }) {
-  const [status, setStatus] = useState("idle");
+export function CandidateForm() {
   const searchParams = useSearchParams();
-  const jobId = searchParams.get("jobId") ?? "";
+  const jobId = searchParams.get("jobId") ?? ""; // empty when not applying to a specific job
+  const [status, setStatus] = useState("idle"); // idle | sending | done | error
 
   async function submit(e) {
     e.preventDefault();
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form));
 
+    // honeypot: pretend success for bots
     if (data.website) {
       setStatus("done");
       return;
     }
-    delete data.website;
 
     setStatus("sending");
     try {
-      await addDoc(collection(db, "submissions"), {
-        ...data,
-        type,
-        status: "new",
-        createdAt: serverTimestamp(),
+      // pull title/company/country from the job so the admin page can show them
+      let job = {};
+      if (jobId) {
+        const snap = await getDoc(doc(db, "jobs", jobId)); // change if your jobs collection has another name
+        if (snap.exists()) job = snap.data();
+      }
+
+      await addDoc(collection(db, "applications"), {
+        // applicant
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        experience: Number(data.experience),
+        trade: data.trade,
+        preferredCountry: data.country,
+        coverNote: data.message,
+        resumeUrl: data.cvLink,
+        resumeName: "CV",
+        // job
+        jobId,
+        jobTitle: job.title ?? "General application",
+        company: job.company ?? "",
+        country: job.country ?? data.country,
+        // admin fields
+        status: "pending",
+        appliedAt: serverTimestamp(),
       });
+
       form.reset();
       setStatus("done");
     } catch (err) {
@@ -41,7 +69,7 @@ export function ReadyForm({ type = "candidate" }) {
     }
   }
 
-  if (status === "done")
+  if (status === "done") {
     return (
       <div className="rounded-md border border-success/30 bg-success-soft p-6">
         <CheckCircle2 className="size-8 text-success" />
@@ -54,9 +82,10 @@ export function ReadyForm({ type = "candidate" }) {
         </p>
       </div>
     );
+  }
 
   return (
-    <form onSubmit={submit} className="grid gap-4" aria-label={`${type} form`}>
+    <form onSubmit={submit} className="grid gap-4" aria-label="Candidate form">
       {/* honeypot */}
       <input
         type="text"
@@ -67,11 +96,17 @@ export function ReadyForm({ type = "candidate" }) {
         aria-hidden="true"
       />
 
+      {jobId && (
+        <p className="rounded-md bg-muted p-3 text-sm">
+          Applying for job reference CD-{jobId.slice(0, 5).toUpperCase()}
+        </p>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Full name">
           <Input name="name" required minLength={2} maxLength={100} placeholder="Your full name" />
         </Field>
-        <Field label={type === "employer" ? "Company email" : "Email address"}>
+        <Field label="Email address">
           <Input name="email" required type="email" maxLength={255} placeholder="name@example.com" />
         </Field>
       </div>
@@ -86,50 +121,25 @@ export function ReadyForm({ type = "candidate" }) {
             placeholder="+91 98XXXXXXXX"
           />
         </Field>
-        <Field label={type === "employer" ? "Company name" : "Preferred country"}>
-          <Input
-            name={type === "employer" ? "company" : "country"}
-            required
-            maxLength={100}
-            placeholder={type === "employer" ? "Your company" : "e.g. UAE"}
-          />
+        <Field label="Preferred country">
+          <Input name="country" required maxLength={100} placeholder="e.g. UAE" />
         </Field>
       </div>
 
-      {type === "candidate" && (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Trade / target role">
-              <Input name="trade" required maxLength={100} placeholder="e.g. Electrician" />
-            </Field>
-            <Field label="Years of experience">
-              <Input name="experience" required type="number" min="0" max="50" placeholder="3" />
-            </Field>
-          </div>
-          <Field label="CV link (Google Drive, Dropbox, etc.)">
-            <Input name="cvLink" required type="url" maxLength={500} placeholder="https://drive.google.com/..." />
-          </Field>
-        </>
-      )}
-
-      {type === "employer" && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Roles needed">
-            <Input name="roles" required maxLength={200} placeholder="e.g. 25 pipe fitters" />
-          </Field>
-          <Field label="Hiring timeline">
-            <Input name="timeline" required maxLength={100} placeholder="e.g. Within 45 days" />
-          </Field>
-        </div>
-      )}
-
-      {type === "verify" && (
-        <Field label="Job reference / recruiter details">
-          <Input name="reference" required maxLength={150} placeholder="Reference number, phone or company" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Trade / target role">
+          <Input name="trade" required maxLength={100} placeholder="e.g. Electrician" />
         </Field>
-      )}
+        <Field label="Years of experience">
+          <Input name="experience" required type="number" min="0" max="50" placeholder="3" />
+        </Field>
+      </div>
 
-      <Field label={type === "contact" ? "How can we help?" : "Additional details"}>
+      <Field label="CV (PDF, DOC or DOCX — max 5 MB)">
+        <Input name="cvFile" required type="file" accept=".pdf,.doc,.docx" maxLength={500} placeholder="https://drive.google.com/..." />
+      </Field>
+
+      <Field label="Additional details">
         <Textarea
           name="message"
           required
@@ -151,15 +161,7 @@ export function ReadyForm({ type = "candidate" }) {
       )}
 
       <Button type="submit" size="lg" variant="highlight" disabled={status === "sending"}>
-        {status === "sending"
-          ? "Sending..."
-          : type === "candidate"
-            ? "Register & submit CV"
-            : type === "employer"
-              ? "Submit manpower requirement"
-              : type === "verify"
-                ? "Request verification"
-                : "Send enquiry"}
+        {status === "sending" ? "Sending..." : "Register & submit CV"}
       </Button>
     </form>
   );

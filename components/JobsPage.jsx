@@ -43,7 +43,7 @@ function JobCard({ job }) {
       </dl>
       <Button asChild className="mt-5 w-full" variant="default">
         <Link
-          href={`/jobs/${job.docId}`}
+          href={`/seekers?jobId=${job.docId}`}
           className="flex items-center gap-2"
         >
           View & apply <ArrowRight />
@@ -83,7 +83,7 @@ export function JobsPage({ compact = false }) {
         text="Search verified requirements by trade, industry and destination. Sample listings are clearly presented while final employer validation is completed."
       >
         <Button asChild variant="highlight" size="lg">
-          <Link href="/job-seekers">Register your CV</Link>
+          <Link href="/seekers">Register your CV</Link>
         </Button>
       </PageHero>
 
