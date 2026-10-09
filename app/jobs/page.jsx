@@ -1,11 +1,12 @@
 import { JobsPage } from '@/components/JobsPage';
+import { Suspense } from "react";
 import React from 'react'
 
 const page = () => {
   return (
-    <div>
-        <JobsPage />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <JobsPage />
+    </Suspense>
   )
 }
 

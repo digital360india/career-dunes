@@ -29,6 +29,9 @@ import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import { SectionHeading } from "./common/SectionHeading";
 import { FraudBand } from "./common/FraudBand";
+import { JobCard } from "./common/JobCard";
+import { useRouter } from "next/navigation";
+import { useJobs } from "@/hooks/useJobs";
 
 const stats = [
   ["12+", "Years of combined recruitment experience"],
@@ -229,13 +232,28 @@ function JobAlertForm() {
 }
 
 export function HomePage() {
-  const [openFaq, setOpenFaq] = useState(null > 0);
+  const router = useRouter();
+  const [openFaq, setOpenFaq] = useState(null);
+  const [query, setQuery] = useState("");
+  const { jobs, isLoading, error } = useJobs();
+
+  const countries = [...new Set(jobs.map((j) => j.country).filter(Boolean))];
+  const featured = jobs.slice(0, 3);
+
+  function goToJobs({ country, q } = {}) {
+    const params = new URLSearchParams();
+    if (country && country !== "All") params.set("country", country);
+    if (q?.trim()) params.set("q", q.trim());
+    const qs = params.toString();
+    router.push(qs ? `/jobs?${qs}` : "/jobs");
+  }
+
   return (
     <main>
       {/* Hero */}
       <section className="relative overflow-hidden bg-primary">
         <img
-          src='/heroimg.jpg'
+          src="/heroimg.jpg"
           alt="Indian skilled worker at an airport departure hall, ready for an overseas job"
           className="absolute inset-0 h-full w-full object-cover"
           width={1920}
@@ -308,65 +326,72 @@ export function HomePage() {
             title="Featured overseas jobs"
             text="Search verified requirements by trade and destination. Listings are representative samples until final employer validation is completed."
           />
-          {/* <JobsExplorer  */}
-          <div>
-            <div className="mb-7 grid gap-3 rounded-md border border-border bg-card p-4 shadow-sm md:grid-cols-[1fr_220px_auto]">
-              <label className="relative">
-                <Search className="absolute left-3 top-3.5 size-5 text-muted-foreground" />
-                <Input
-                  className="h-12 pl-10"
-                //   value={query}
-                //   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search job title or trade"
-                  aria-label="Search jobs"
-                />
-              </label>
-              {/* <select
-                className="h-12 rounded-md border border-input bg-background px-3 text-sm"
-                // value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                aria-label="Filter by country"
-              >
-                <option>All</option>
-                {[...new Set(jobs.map((j) => j.country))].map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select> */}
-              <Button
-                size="lg"
-                onClick={() => {
-                  setQuery("");
-                  setCountry("All");
-                }}
-                variant="outline"
-              >
-                Clear
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              goToJobs({ q: query });
+            }}
+            className="mb-7 grid gap-3 rounded-md border border-border bg-card p-4 shadow-sm md:grid-cols-[1fr_220px_auto]"
+          >
+            <label className="relative">
+              <Search className="absolute left-3 top-3.5 size-5 text-muted-foreground" />
+              <Input
+                className="h-12 pl-10"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search job title, company or city"
+                aria-label="Search jobs"
+              />
+            </label>
+            <select
+              className="h-12 rounded-md border border-input bg-background px-3 text-sm"
+              defaultValue="All"
+              onChange={(e) => goToJobs({ country: e.target.value, q: query })}
+              aria-label="Filter by country"
+            >
+              <option>All</option>
+              {countries.map((c) => (
+                <option key={c}>{c}</option>
+              ))}
+            </select>
+            <Button type="submit" size="lg">
+              Search
+            </Button>
+          </form>
+
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {featured.map((j) => (
+              <JobCard key={j.docId} job={j} />
+            ))}
+          </div>
+
+          {isLoading && (
+            <p className="text-muted-foreground">Loading current openings…</p>
+          )}
+          {error && (
+            <p className="text-destructive">
+              Couldn&apos;t load jobs right now. Please try again later.
+            </p>
+          )}
+          {!isLoading && !error && featured.length === 0 && (
+            <div className="rounded-md bg-muted p-8 text-center">
+              <p className="font-bold">No openings right now.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Register your CV and we&apos;ll contact you when a match opens.
+              </p>
+            </div>
+          )}
+
+          {jobs.length > 3 && (
+            <div className="mt-8 text-center">
+              <Button asChild variant="outline" size="lg">
+                <Link href="/jobs" className="flex items-center gap-2">
+                  View more jobs <ArrowRight />
+                </Link>
               </Button>
             </div>
-            {/* <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {filtered.slice(0, compact ? 3 : 99).map((j) => (
-                <JobCard key={j.id} job={j} />
-              ))}
-            </div> */}
-            {/* {isLoading && (
-              <p className="text-muted-foreground">Loading current openings…</p>
-            )}
-            {!isLoading && filtered.length === 0 && (
-              <div className="rounded-md bg-muted p-8 text-center">
-                <p className="font-bold">No jobs match your search.</p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Try another job title or country.
-                </p>
-              </div>
-            )} */}
-          </div>
-          <div className="mt-8 text-center">
-            <Button asChild variant="outline" size="lg">
-              <Link href="/jobs" className="flex items-center gap-2">
-                View all current jobs <ArrowRight />
-              </Link>
-            </Button>
-          </div>
+          )}
         </div>
       </section>
 
@@ -451,7 +476,10 @@ export function HomePage() {
             ))}
           </div>
           <Button asChild variant="heroOutline" size="lg" className="mt-10">
-            <Link href="/recruitment-process" className="flex items-center gap-2">
+            <Link
+              href="/recruitment-process"
+              className="flex items-center gap-2"
+            >
               See the full recruitment process <ArrowRight />
             </Link>
           </Button>

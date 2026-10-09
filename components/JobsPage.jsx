@@ -7,6 +7,7 @@ import { Button } from "./ui/Button";
 import { FraudBand } from "./common/FraudBand";
 import { PageHero } from "./common/PageHero";
 import { useJobs } from "@/hooks/useJobs";
+import { useSearchParams } from "next/navigation";
 
 function JobCard({ job }) {
   const location = [job.city, job.country].filter(Boolean).join(", ");
@@ -55,8 +56,14 @@ function JobCard({ job }) {
 
 export function JobsPage({ compact = false }) {
   const { jobs, isLoading, error } = useJobs();
-  const [query, setQuery] = useState("");
-  const [country, setCountry] = useState("All");
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const [country, setCountry] = useState(searchParams.get("country") ?? "All");
+
+  useEffect(() => {
+    setQuery(searchParams.get("q") ?? "");
+    setCountry(searchParams.get("country") ?? "All");
+  }, [searchParams]);
 
   const countries = useMemo(
     () => [...new Set(jobs.map((j) => j.country).filter(Boolean))],
