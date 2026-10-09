@@ -132,12 +132,17 @@ function ApplicationCard({ app, onStatus }) {
       </div>
 
       {/* Details */}
-      <div className="mt-5 grid gap-4 border-t border-gray-100 pt-5 dark:border-gray-800 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-5 grid gap-4 border-t border-gray-100 pt-5 dark:border-gray-800 sm:grid-cols-2 lg:grid-cols-3">
         <Detail icon={<Icon><path d="M20 7h-4V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2ZM10 5h4v2h-4V5Z" /></Icon>} label="Applied for">
-          {app.jobTitle}{app.company && ` at ${app.company}`}
+          {app.jobTitle
+            ? `${app.jobTitle}${app.company ? ` at ${app.company}` : ""}`
+            : "General registration"}
         </Detail>
-        <Detail icon={<Icon><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></Icon>} label="Country">
-          {app.country || "Not given"}
+        <Detail icon={<Icon><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-.6-.6-2.6 2.6-2.2Z" /></Icon>} label="Trade / target role">
+          {app.trade || "Not given"}
+        </Detail>
+        <Detail icon={<Icon><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></Icon>} label="Preferred country">
+          {app.preferredCountry || app.country || "Not given"}
         </Detail>
         <Detail icon={<Icon><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Icon>} label="Experience">
           {app.experience === undefined || app.experience === ""
@@ -158,7 +163,7 @@ function ApplicationCard({ app, onStatus }) {
         </div>
       )}
 
-      {app.resumeUrl && (
+      {/^https?:\/\//i.test(app.resumeUrl || "") && (
         <a
           href={app.resumeUrl}
           target="_blank"
@@ -211,9 +216,11 @@ export default function AdminApplications() {
   const base = useMemo(() => {
     const s = search.trim().toLowerCase();
     return apps.filter((a) => {
-      if (jobFilter !== "all" && a.jobId !== jobFilter) return false;
+      if (jobFilter === "none") {
+        if (a.jobId) return false;
+      } else if (jobFilter !== "all" && a.jobId !== jobFilter) return false;
       if (!s) return true;
-      return [a.name, a.email, a.phone, a.jobTitle].some((v) => v?.toLowerCase().includes(s));
+      return [a.name, a.email, a.phone, a.jobTitle, a.trade].some((v) => v?.toLowerCase().includes(s));
     });
   }, [apps, jobFilter, search]);
 
@@ -273,6 +280,7 @@ export default function AdminApplications() {
             aria-label="Filter by job"
           >
             <option value="all">All jobs</option>
+            <option value="none">General registrations</option>
             {jobOptions.map((j) => (
               <option key={j.id} value={j.id}>{j.label}</option>
             ))}
