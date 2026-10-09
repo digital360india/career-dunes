@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { Button, buttonVariants } from "@/components/ui/Button";
 
 const links = [
   {
@@ -50,20 +51,12 @@ function NavLinks({ pathname, onNavigate }) {
             href={l.href}
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
-              active
-                ? "bg-indigo-600 text-white shadow-sm"
-                : "text-gray-700 hover:bg-gray-200/70 dark:text-gray-300 dark:hover:bg-gray-800"
-            }`}
+            className={buttonVariants({
+              variant: active ? "default" : "ghost",
+              className: "h-10 w-full justify-start gap-3 px-3",
+            })}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className={`h-5 w-5 shrink-0 ${
-                active ? "text-white" : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200"
-              }`}
-              aria-hidden="true"
-            >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               {l.icon}
             </svg>
             {l.label}
@@ -78,7 +71,7 @@ function SidebarHeader() {
   return (
     <div className="mb-6 flex items-center gap-3 px-1">
       <div
-        className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white"
+        className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground"
         aria-hidden="true"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
@@ -86,8 +79,8 @@ function SidebarHeader() {
         </svg>
       </div>
       <div className="leading-tight">
-        <h2 className="text-base font-bold text-gray-900 dark:text-gray-50">Admin</h2>
-        <p className="text-xs text-gray-500">Manage your job board</p>
+        <h2 className="text-base font-bold text-foreground">Admin</h2>
+        <p className="text-xs text-muted-foreground">Manage your job board</p>
       </div>
     </div>
   );
@@ -124,9 +117,9 @@ export default function AdminLayout({ children }) {
   if (loading || role !== "admin") {
     return (
       <div className="flex min-h-[80vh] items-center justify-center p-6" role="status">
-        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span
-            className="h-5 w-5 rounded-full border-2 border-gray-300 border-t-indigo-600 motion-safe:animate-spin"
+            className="h-5 w-5 rounded-full border-2 border-border border-t-primary motion-safe:animate-spin"
             aria-hidden="true"
           />
           Checking access…
@@ -138,31 +131,32 @@ export default function AdminLayout({ children }) {
   const current = links.find((l) => isActive(pathname, l.href))?.label ?? "Admin";
 
   return (
-    <div className="min-h-[80vh] bg-white dark:bg-gray-950 lg:flex">
+    <div className="min-h-[80vh] bg-background lg:flex">
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-gray-200 bg-white/90 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/90 lg:hidden">
-        <button
+      <div className="sticky top-[70px] z-30 flex items-center gap-3 border-b border-border bg-background/90 px-4 py-3 backdrop-blur lg:hidden">
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => setOpen(true)}
           aria-label="Open menu"
           aria-expanded={open}
           aria-controls="admin-drawer"
-          className="rounded-lg p-2 text-gray-700 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 dark:text-gray-200 dark:hover:bg-gray-800"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-6 w-6" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-        </button>
-        <span className="text-base font-semibold text-gray-900 dark:text-gray-50">{current}</span>
+        </Button>
+        <span className="text-base font-semibold text-foreground">{current}</span>
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900 lg:block">
-        <div className="sticky top-0 max-h-screen overflow-y-auto p-4">
+      <aside className="hidden w-64 shrink-0 self-start border-r border-border bg-muted/40 lg:sticky lg:top-[150px] lg:block lg:h-[calc(100vh-150px)] lg:overflow-y-auto">
+        <div className="p-4">
           <SidebarHeader />
           <NavLinks pathname={pathname} />
           {user?.email && (
-            <p className="mt-8 truncate border-t border-gray-200 px-1 pt-4 text-xs text-gray-500 dark:border-gray-800">
+            <p className="mt-8 truncate border-t border-border px-1 pt-4 text-xs text-muted-foreground">
               Signed in as {user.email}
             </p>
           )}
@@ -176,7 +170,7 @@ export default function AdminLayout({ children }) {
       >
         <div
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-gray-900/50 transition-opacity duration-200 ${
+          className={`absolute inset-0 bg-foreground/50 transition-opacity duration-200 ${
             open ? "opacity-100" : "opacity-0"
           }`}
         />
@@ -185,21 +179,22 @@ export default function AdminLayout({ children }) {
           role="dialog"
           aria-modal="true"
           aria-label="Admin menu"
-          className={`absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto bg-gray-50 p-4 shadow-xl transition-transform duration-200 dark:bg-gray-900 ${
+          className={`absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col overflow-y-auto bg-background p-4 shadow-xl transition-transform duration-200 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <div className="mb-2 flex justify-end">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="rounded-lg p-2 text-gray-600 hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 dark:text-gray-300 dark:hover:bg-gray-800"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                 <path d="M6 6l12 12M18 6 6 18" />
               </svg>
-            </button>
+            </Button>
           </div>
           <SidebarHeader />
           <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />

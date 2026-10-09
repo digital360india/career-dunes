@@ -114,7 +114,7 @@ export function CandidateForm() {
             name="phone"
             required
             inputMode="tel"
-            pattern="[+0-9 -]{8,18}"
+            pattern="[+0-9 \-]{8,18}"
             placeholder="+91 98XXXXXXXX"
           />
         </Field>
