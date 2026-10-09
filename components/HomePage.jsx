@@ -86,7 +86,8 @@ const faqs = [
   ],
 ];
 
-const countries = [
+// RENAMED: was `countries` (clashed with the backend list inside HomePage)
+const countryCards = [
   {
     slug: "uae",
     name: "United Arab Emirates",
@@ -237,6 +238,7 @@ export function HomePage() {
   const [query, setQuery] = useState("");
   const { jobs, isLoading, error } = useJobs();
 
+  // Strings from the backend, e.g. "UAE" (used only by the <select>)
   const countries = [...new Set(jobs.map((j) => j.country).filter(Boolean))];
   const featured = jobs.slice(0, 3);
 
@@ -352,7 +354,9 @@ export function HomePage() {
             >
               <option>All</option>
               {countries.map((c) => (
-                <option key={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
             <Button type="submit" size="lg">
@@ -404,11 +408,10 @@ export function HomePage() {
             text="Verified opportunities across the Gulf and selected international markets."
           />
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {countries.map((c) => (
+            {countryCards.map((c) => (
               <Link
                 key={c.slug}
-                href="/countries/$slug"
-                params={{ slug: c.slug }}
+                href={`/countries/${c.slug}`}
                 className="card p-6"
               >
                 <span className="text-3xl">{c.flag}</span>

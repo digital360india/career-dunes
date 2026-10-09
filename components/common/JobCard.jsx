@@ -1,7 +1,6 @@
 import { ArrowRight, MapPin } from "lucide-react";
 import { Button } from "../ui/Button";
 import Link from "next/link";
-import { useJobs } from "@/hooks/useJobs";
 
 export function JobCard({ job }) {
   const location = [job.city, job.country].filter(Boolean).join(", ");

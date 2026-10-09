@@ -1,10 +1,10 @@
 import { ShieldAlert } from "lucide-react";
 
 const QUICK_LINKS = [
-  { label: "About us", href: "#about" },
-  { label: "Current jobs", href: "#jobs" },
-  { label: "For employers", href: "#employers" },
-  { label: "Contact us", href: "#contact" },
+  { label: "About us", href: "/about" },
+  { label: "Current jobs", href: "/jobs" },
+  { label: "For employers", href: "/employers" },
+  { label: "Contact us", href: "/contact" },
 ];
 
 const COUNTRIES = [
@@ -70,7 +70,7 @@ export default function Footer() {
             </p>
 
             <a
-              href="#report-fraud"
+              href="/report-fraud"
               className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#dca564] transition hover:text-[#e8b87a]"
             >
               <ShieldAlert className="h-4 w-4" />
