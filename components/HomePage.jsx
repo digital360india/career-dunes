@@ -513,7 +513,7 @@ export function HomePage() {
               ))}
             </ul>
             <Button asChild className="mt-7" variant="highlight">
-              <Link href="/job-seekers" className="flex items-center gap-2">
+              <Link href="/seekers" className="flex items-center gap-2">
                 Register as a candidate <ArrowRight />
               </Link>
             </Button>
@@ -642,7 +642,7 @@ export function HomePage() {
           </div>
           <div className="flex flex-wrap gap-4">
             <Button asChild size="xl" variant="highlight">
-              <Link href="/job-seekers" className="flex items-center gap-2">
+              <Link href="/seekers" className="flex items-center gap-2">
                 Register now <Plane />
               </Link>
             </Button>

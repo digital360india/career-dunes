@@ -28,6 +28,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${figtree.variable} ${outfit.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
     >
       <body
         className="min-h-full flex flex-col font-sans"
