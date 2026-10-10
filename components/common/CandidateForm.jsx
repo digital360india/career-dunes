@@ -1,25 +1,41 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CheckCircle2, CircleAlert } from "lucide-react";
+import Link from "next/link";
+import { CheckCircle2, CircleAlert, LogIn } from "lucide-react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Field } from "@/components/ui/Field";
-
+import { useAuth } from "@/context/AuthContext";
+import { useRouter, usePathname } from "next/navigation";
 
 export function CandidateForm() {
   const [jobId, setJobId] = useState("");
   const [status, setStatus] = useState("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("jobId");
     setJobId(id ?? "");
   }, []);
 
+  const returnTo = jobId ? `${pathname}?jobId=${jobId}` : pathname;
+  const loginHref = `/login?redirect=${encodeURIComponent(returnTo)}`;
+
   async function submit(e) {
     e.preventDefault();
+
+    if (loading) return;
+    if (!user) {
+      router.push(loginHref);
+      return;
+    }
+
     const form = e.currentTarget;
     const data = Object.fromEntries(new FormData(form));
 
@@ -30,6 +46,7 @@ export function CandidateForm() {
     }
 
     setStatus("sending");
+    setErrorMsg("");
     try {
       await addDoc(collection(db, "applications"), {
         name: String(data.name),
@@ -50,6 +67,11 @@ export function CandidateForm() {
       setStatus("done");
     } catch (err) {
       console.error("APPLICATION WRITE failed:", err?.code, err?.message);
+      setErrorMsg(
+        err?.code === "permission-denied"
+          ? "You don't have permission to apply right now. Please log in again, or contact us on WhatsApp."
+          : "Something went wrong. Please try again."
+      );
       setStatus("error");
     }
   }
@@ -80,6 +102,21 @@ export function CandidateForm() {
         className="hidden"
         aria-hidden="true"
       />
+      
+      {!loading && !user && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 rounded-md border border-highlight/40 bg-highlight/10 p-4 text-sm"
+        >
+          <LogIn className="mt-0.5 size-4 shrink-0" />
+          <p className="leading-6">
+            Please <strong>log in first</strong> before you apply for any job.{" "}
+            <Link href={loginHref} className="font-semibold underline">
+              Log in or sign up
+            </Link>
+          </p>
+        </div>
+      )}
 
       {jobId && (
         <p className="rounded-md bg-muted p-3 text-sm">
@@ -177,9 +214,7 @@ export function CandidateForm() {
       </div>
 
       {status === "error" && (
-        <p className="text-sm text-red-600">
-          Something went wrong. Please try again.
-        </p>
+        <p className="text-sm text-red-600">{errorMsg}</p>
       )}
 
       <Button
@@ -188,7 +223,11 @@ export function CandidateForm() {
         variant="highlight"
         disabled={status === "sending"}
       >
-        {status === "sending" ? "Sending..." : "Register & submit CV"}
+        {status === "sending"
+          ? "Sending..."
+          : !loading && !user
+            ? "Log in to apply"
+            : "Register & submit CV"}
       </Button>
     </form>
   );

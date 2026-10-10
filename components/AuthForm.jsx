@@ -1,11 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { Briefcase, KeyRound, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "./ui/Button";
-
 
 export default function AuthForm({ mode }) {
   const isSignup = mode === "signup";
@@ -14,8 +13,15 @@ export default function AuthForm({ mode }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [redirect, setRedirect] = useState("");
 
-  const go = (role) => router.push(role === "admin" ? "/admin" : "/");
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get("redirect");
+    setRedirect(r && r.startsWith("/") && !r.startsWith("//") ? r : "");
+  }, []);
+
+  const go = (role) =>
+    router.push(role === "admin" ? "/admin" : redirect || "/");
 
   const run = async (fn) => {
     setError("");
@@ -39,11 +45,23 @@ export default function AuthForm({ mode }) {
   };
 
   const heading = {
-    signup: { title: "Create team account", text: "Set up an account to access the Career Dunes team area." },
-    login: { title: "Welcome back", text: "Sign in to your Career Dunes team account." },
-    forgot: { title: "Reset your password", text: "Enter your team email and we will send a secure reset link." },
-    reset: { title: "Set a new password", text: "Choose a new password for your account." },
-  }[mode]
+    signup: {
+      title: "Create team account",
+      text: "Set up an account to access the Career Dunes team area.",
+    },
+    login: {
+      title: "Welcome back",
+      text: "Sign in to your Career Dunes team account.",
+    },
+    forgot: {
+      title: "Reset your password",
+      text: "Enter your team email and we will send a secure reset link.",
+    },
+    reset: {
+      title: "Set a new password",
+      text: "Choose a new password for your account.",
+    },
+  }[mode];
 
   const input =
     "w-full rounded-lg border border-gray-300 px-4 py-2.5 outline-none focus:border-blue-600";
@@ -136,7 +154,9 @@ export default function AuthForm({ mode }) {
             {isSignup ? "Already have an account? " : "New here? "}
             <Link
               className="text-blue-600"
-              href={isSignup ? "/login" : "/signup"}
+              href={`${isSignup ? "/login" : "/signup"}${
+                redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""
+              }`}
             >
               {isSignup ? "Log in" : "Sign up"}
             </Link>
