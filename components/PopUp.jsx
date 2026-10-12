@@ -83,7 +83,7 @@ export function JobSeekerPopup() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     if (sessionStorage.getItem("career-dunes-job-popup-dismissed")) return;
-    const timer = window.setTimeout(() => setOpen(true), 1200);
+    const timer = window.setTimeout(() => setOpen(true), 5000);
     return () => window.clearTimeout(timer);
   }, []);
   useEffect(() => {
