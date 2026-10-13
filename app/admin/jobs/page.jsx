@@ -146,7 +146,7 @@ function JobCard({ job, onToggle, onDelete }) {
             role="switch"
             aria-checked={!!job.active}
             onClick={() => onToggle(job)}
-            className="group flex cursor-pointer items-center gap-2 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="group flex cursor-pointer items-center gap-2 rounded-full focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <span
               className={`relative h-6 w-11 rounded-full transition-colors ${
@@ -415,7 +415,7 @@ export default function AdminJobs() {
             <div
               role="status"
               aria-live="polite"
-              className="min-h-[1.25rem] text-sm"
+              className="min-h-5 text-sm"
             >
               {notice && (
                 <span
