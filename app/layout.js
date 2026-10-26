@@ -4,6 +4,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { JobSeekerPopup } from "@/components/PopUp";
 import { AuthProvider } from "@/context/AuthContext";
+import WhatsAppFloat from "@/components/WhatsAppFloat";
+import JobChatFloat from "@/components/JobChatFloat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +37,13 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <AuthProvider>
-           <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <JobSeekerPopup />
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+          <WhatsAppFloat />
+          <JobChatFloat />
+          <JobSeekerPopup />
         </AuthProvider>
-       
       </body>
     </html>
   );
