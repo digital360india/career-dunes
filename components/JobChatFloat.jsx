@@ -20,11 +20,50 @@ const SUGGESTIONS = [
 
 function ChatWindow({ onClose }) {
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
+  const bottomRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const sendMessage = async (e) => {
+    e?.preventDefault();
+    const text = input.trim();
+    if (!text || loading) return;
+
+    const next = [...messages, { role: "user", text }];
+    setMessages(next);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setMessages([...next, { role: "assistant", text: data.reply }]);
+    } catch {
+      setMessages([
+        ...next,
+        {
+          role: "assistant",
+          text: "Sorry, something went wrong. Please try again.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -38,12 +77,19 @@ function ChatWindow({ onClose }) {
           <BriefcaseBusiness className="size-5" />
         </span>
         <div className="flex-1">
-          <p className="font-heading text-sm font-semibold">Dune · Job assistant</p>
-          <p className="text-xs text-primary-foreground/70">AI suggestions from our live openings</p>
+          <p className="font-heading text-sm font-semibold">
+            Dune · Job assistant
+          </p>
+          <p className="text-xs text-primary-foreground/70">
+            AI suggestions from our live openings
+          </p>
         </div>
         <button
           aria-label="Start over"
-          onClick={() => setInput("")}
+          onClick={() => {
+            setInput("");
+            setMessages([]);
+          }}
           className="rounded-md p-1.5 hover:bg-primary-foreground/10"
         >
           <RotateCcw className="size-4" />
@@ -60,9 +106,33 @@ function ChatWindow({ onClose }) {
       {/* Messages area */}
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4 text-sm">
         <p className="text-foreground">
-          Hi! I'm <strong>Dune</strong>, the Career Dunes job assistant. Tell me your trade, years of
-          experience and preferred countries — or paste your CV — and I'll suggest matching overseas jobs.
+          Hi! I'm <strong>Dune</strong>, the Career Dunes job assistant. Tell me
+          your trade, years of experience and preferred countries — or paste
+          your CV — and I'll suggest matching overseas jobs.
         </p>
+
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={
+              m.role === "user" ? "flex justify-end" : "flex justify-start"
+            }
+          >
+            <p
+              className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3 py-2 ${
+                m.role === "user"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-foreground"
+              }`}
+            >
+              {m.text}
+            </p>
+          </div>
+        ))}
+        {loading && (
+          <p className="text-xs text-muted-foreground">Dune is typing…</p>
+        )}
+        <div ref={bottomRef} />
       </div>
 
       {/* Quick suggestions: they just fill the input box */}
@@ -80,7 +150,7 @@ function ChatWindow({ onClose }) {
 
       {/* Input bar */}
       <form
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={sendMessage}
         className="flex items-end gap-2 border-t border-border p-3"
       >
         <button
@@ -94,6 +164,9 @@ function ChatWindow({ onClose }) {
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) sendMessage(e);
+          }}
           rows={1}
           placeholder="Type your message or paste your CV…"
           aria-label="Message"
@@ -102,7 +175,7 @@ function ChatWindow({ onClose }) {
         <button
           type="submit"
           aria-label="Send"
-          disabled={!input.trim()}
+          disabled={!input.trim() || loading}
           className="grid size-10 shrink-0 place-items-center rounded-lg bg-highlight text-primary disabled:opacity-50"
         >
           <Send className="size-4" />
@@ -163,14 +236,22 @@ export default function JobChatFloat() {
                 </span>
                 <div className="min-w-0">
                   <p className="font-display text-sm font-semibold">Dune</p>
-                  <p className="text-xs text-muted-foreground">Your AI job assistant</p>
+                  <p className="text-xs text-muted-foreground">
+                    Your AI job assistant
+                  </p>
                 </div>
               </div>
-              <p className="font-display text-lg font-semibold leading-snug">Looking for work overseas?</p>
+              <p className="font-display text-lg font-semibold leading-snug">
+                Looking for work overseas?
+              </p>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                 Tell me your trade. Let’s find your next opportunity.
               </p>
-              <Button variant="link" onClick={toggle} className="mt-2 h-8 px-0 text-secondary">
+              <Button
+                variant="link"
+                onClick={toggle}
+                className="mt-2 h-8 px-0 text-secondary"
+              >
                 Let’s talk <ArrowUpRight aria-hidden="true" />
               </Button>
             </div>
@@ -189,8 +270,12 @@ export default function JobChatFloat() {
               <MessageCircle aria-hidden="true" className="size-5" />
             </span>
             <span className="min-w-0">
-              <span className="block text-sm font-bold">Find my overseas job</span>
-              <span className="block text-xs font-medium">Chat with Dune · AI assistant</span>
+              <span className="block text-sm font-bold">
+                Find my overseas job
+              </span>
+              <span className="block text-xs font-medium">
+                Chat with Dune · AI assistant
+              </span>
             </span>
           </Button>
         </aside>
